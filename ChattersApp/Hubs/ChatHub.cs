@@ -11,7 +11,7 @@ namespace ChattersApp.Hubs
             _botUser = "Chatter Bot";
         }
 
-        public async Task JoinRoomAsync(UserConnection userConnection)
+        public async Task JoinRoom(UserConnection userConnection)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomName);
             await Clients.Group(userConnection.RoomName).SendAsync("ReceiveMessage", _botUser, $"{userConnection.Nickname} has joined {userConnection.RoomName}");

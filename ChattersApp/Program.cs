@@ -24,6 +24,6 @@ app.UseRouting();
 app.UseCors();
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<ChatHub>("/ChattersHub");
+    endpoints.MapHub<ChatHub>("/chat");
 });
 app.Run();
