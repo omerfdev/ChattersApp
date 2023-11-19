@@ -1,27 +1,28 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Lobby from './components/Lobby'
+import Lobby from './components/Lobby';
+import Chat from './components/Chat';
 import { HubConnectionBuilder,LogLevel } from '@microsoft/signalr';
 import { useState } from 'react';
 
 
 
-const App=()=>
-{
+const App = ()=> {
     const [connection,setConnection]=useState();
+    const [messages,setMessages]=useState([]);
     const joinRoom=async(user,room) =>{
         try{
             const connection=new HubConnectionBuilder()
-            .withUrl("https://localhost:44345/ChattersHub")
+            .withUrl("https://localhost:44374/chat")
             .configureLogging(LogLevel.Information)
             .build();
 
             connection.on("ReceiveMessage",(user,message)=>{
-                console.log('message received: ',message);
+                setMessages(messages=>[...messages,{user,message}]);
             });
 
             await connection.start();
-            await connection.invoke("JoinRoom",{user,room});  
+            await connection.invoke("JoinRoom",{Nickname: user, RoomName: room});  
             setConnection(connection);
         }
         catch(e){
@@ -32,7 +33,8 @@ const App=()=>
     return <div className='app' >
         <h2>Chatter's Chat</h2>
         <hr className='line'/>
-        <Lobby joinRoom={joinRoom} />
+        {!connection ? <Lobby joinRoom={joinRoom}/> : <Chat messages={messages} />}
+        
     </div>
 }
 export default App;
