@@ -14,6 +14,19 @@ namespace ChattersApp.Hubs
             _connections = connections;
         }
 
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId,out UserConnection userConnection)) 
+            { 
+                _connections.Remove(Context.ConnectionId);
+                Clients.Group(userConnection.RoomName).SendAsync("ReceiveMessage", _botUser, $"{userConnection.Nickname} has left");
+            
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
         public async  Task SendMessage(string message)
         {
             if (_connections.TryGetValue(Context.ConnectionId,out UserConnection userConnection))
